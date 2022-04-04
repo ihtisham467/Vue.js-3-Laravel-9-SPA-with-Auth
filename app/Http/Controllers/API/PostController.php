@@ -9,8 +9,10 @@ use App\Http\Resources\PostResource;
 
 class PostController extends Controller
 {
-    public function index() {
-        $posts = Post::with('category')->paginate(5);
+    public function index(Request $request) {
+        $posts = Post::with('category')->when(request('category_id', '') != '' , function($query) {
+            $query->where('category_id', request('category_id'));
+        })->paginate(5);
         return PostResource::collection($posts);
     }
 }

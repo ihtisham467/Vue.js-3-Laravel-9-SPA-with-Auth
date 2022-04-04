@@ -1,8 +1,8 @@
 <template>
   <div>
-      <select class="form-control w-50 mb-3">
+      <select v-model="category_id" class="form-control w-50 mb-3 col-md-3">
           <option value="">Filter by Category</option>
-          <option v-for="category in categories" value="{{ category.id }}">{{ category.name }}</option>
+          <option v-for="category in categories" :value="category.id">{{ category.name }}</option>
       </select>
     <table class="table">
       <thead>
@@ -34,6 +34,7 @@ export default {
     return {
       posts: [],
       categories: [],
+      category_id: '',
     };
   },
 
@@ -41,11 +42,16 @@ export default {
     this.fetchPosts();
     this.fetchCategories();
   },
+  watch: {
+    category_id(value) {
+      this.fetchPosts();
+    }
+  },
 
   methods: {
     fetchPosts(page = 1) {
       axios
-        .get("/api/posts?page=" + page)
+        .get("/api/posts?page=" + page + '&category_id=' + this.category_id)
         .then((response) => (this.posts = response.data))
         .catch((error) => console.log(error));
     },
